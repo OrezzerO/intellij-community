@@ -328,14 +328,14 @@ public final class JBCefApp {
         return unsupported.apply("JCEF: minimum supported CEF major version is " + MIN_SUPPORTED_CEF_MAJOR_VERSION +
                                  ", current is " + version.cefVersion.major);
       }
-      if (MIN_SUPPORTED_JCEF_API_MAJOR_VERSION > version.apiVersion.major ||
-          (MIN_SUPPORTED_JCEF_API_MAJOR_VERSION == version.apiVersion.major &&
-           MIN_SUPPORTED_JCEF_API_MINOR_VERSION > version.apiVersion.minor))
-      {
-        return unsupported.apply("JCEF: minimum supported API version is " +
-                                 MIN_SUPPORTED_JCEF_API_MAJOR_VERSION + "." + MIN_SUPPORTED_JCEF_API_MINOR_VERSION +
-                                 ", current is " + version.apiVersion.major + "." + version.apiVersion.minor);
-      }
+      //if (MIN_SUPPORTED_JCEF_API_MAJOR_VERSION > version.apiVersion.major ||
+      //    (MIN_SUPPORTED_JCEF_API_MAJOR_VERSION == version.apiVersion.major &&
+      //     MIN_SUPPORTED_JCEF_API_MINOR_VERSION > version.apiVersion.minor))
+      //{
+      //  return unsupported.apply("JCEF: minimum supported API version is " +
+      //                           MIN_SUPPORTED_JCEF_API_MAJOR_VERSION + "." + MIN_SUPPORTED_JCEF_API_MINOR_VERSION +
+      //                           ", current is " + version.apiVersion.major + "." + version.apiVersion.minor);
+      //}
       URL url = JCefAppConfig.class.getResource("JCefAppConfig.class");
       if (url == null) {
         return unsupported.apply("JCefAppConfig.class not found");
