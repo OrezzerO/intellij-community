@@ -6,6 +6,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +24,15 @@ public class EasyItInsertAction extends AnAction {
 
     Editor editor = anActionEvent.getData(CommonDataKeys.EDITOR);
     PsiFile psiFile = anActionEvent.getData(CommonDataKeys.PSI_FILE);
-    String fileName = psiFile.toString();
+    VirtualFile currentVirtualFile = psiFile.getVirtualFile();
+
+    String path = VfsUtilCore.findRelativePath(pop.virtualFile, currentVirtualFile, VfsUtilCore.VFS_SEPARATOR_CHAR);
+    int lineNumber = editor.getCaretModel().getLogicalPosition().line + 1;
 
 
     Document doc = pop.doc;
     runWriteCommandAction(anActionEvent.getProject(), () ->
-      doc.replaceString(pop.selectedStart, pop.selectedEnd, "[" + pop.text + "](file://"+fileName+")")
+      doc.replaceString(pop.selectedStart, pop.selectedEnd, "[" + pop.text + "](" + path + "#L" + lineNumber + ")")
     );
   }
 }

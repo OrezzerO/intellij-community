@@ -25,6 +25,7 @@ public class EasyItRecordAction extends AnAction {
     record.selectedStart = caretModel.getPrimaryCaret().getSelectionStart();
     record.selectedEnd = caretModel.getPrimaryCaret().getSelectionEnd();
     record.doc = editor.getDocument();
+    record.virtualFile = psiFile.getVirtualFile();
     // todo record something
     OneTimeRecorder.push(record);
   }

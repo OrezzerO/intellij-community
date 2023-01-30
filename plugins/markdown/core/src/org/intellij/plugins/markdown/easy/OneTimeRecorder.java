@@ -1,6 +1,7 @@
 package org.intellij.plugins.markdown.easy;
 
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -26,5 +27,8 @@ public class OneTimeRecorder {
 
         public int selectedStart;
         public int selectedEnd;
+
+
+      VirtualFile virtualFile;
     }
 }
