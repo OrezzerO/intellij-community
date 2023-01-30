@@ -468,6 +468,20 @@
   </extensions>
 
   <actions>
+
+
+    <action class="org.intellij.plugins.markdown.easy.EasyItRecordAction" id="EasyItRecordAction"
+            text="EasyIt Record">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <keyboard-shortcut first-keystroke="meta control C"  keymap="$default"/>
+    </action>
+
+    <action class="org.intellij.plugins.markdown.easy.EasyItInsertAction" id="EasyItInsertAction"
+            text="EasyIt Insert">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <keyboard-shortcut first-keystroke="meta control V"  keymap="$default"/>
+    </action>
+
     <group id="Markdown.TableActions" compact="true" class="org.intellij.plugins.markdown.editor.tables.actions.TableActionsGroup">
       <group id="Markdown.TableColumnActions" compact="true">
         <action id="Markdown.Table.SwapColumns.SwapWithLeftColumn"
