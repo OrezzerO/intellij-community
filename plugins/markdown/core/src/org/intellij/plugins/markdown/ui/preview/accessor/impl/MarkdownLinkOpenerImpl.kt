@@ -28,7 +28,9 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.PsiNavigateUtil
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.io.isLocalHost
+import org.apache.commons.lang.StringUtils
 import org.intellij.plugins.markdown.MarkdownBundle
+import org.intellij.plugins.markdown.lang.MarkdownLanguageUtils.hasMarkdownType
 import org.intellij.plugins.markdown.lang.index.HeaderAnchorIndex
 import org.intellij.plugins.markdown.settings.DocumentLinksSafeState
 import org.intellij.plugins.markdown.ui.MarkdownNotifications
@@ -168,27 +170,60 @@ internal class MarkdownLinkOpenerImpl: MarkdownLinkOpener {
         }
         return true
       }
-      val point = obtainHeadersPopupPosition(project)
-      if (point == null) {
-        logger.warn("Failed to obtain screen point for showing popup")
+      if (!targetFile.hasMarkdownType()) {
+        if (isLine(anchor)) {
+          val line = getLine(anchor)
+          val descriptor = OpenFileDescriptor(project, targetFile, line, 0);
+          invokeLater {
+            descriptor.navigate(true)
+          }
+          return true;
+        }
+        return false;
+      } else {
+        val point = obtainHeadersPopupPosition(project)
+        if (point == null) {
+          logger.warn("Failed to obtain screen point for showing popup")
+          return false
+        }
+        val headers = runReadAction {
+          val file = PsiManager.getInstance(project).findFile(targetFile)
+          val scope = when (file) {
+            null -> GlobalSearchScope.EMPTY_SCOPE
+            else -> GlobalSearchScope.fileScope(file)
+          }
+          return@runReadAction HeaderAnchorIndex.collectHeaders(project, scope, anchor)
+        }
+        invokeLater {
+          when {
+            headers.isEmpty() -> showCannotNavigateNotification(project, anchor, point)
+            headers.size == 1 -> navigateToHeader(project, targetFile, headers.first())
+            else -> showHeadersPopup(project, headers, point)
+          }
+        }
+        return true
+      }
+    }
+
+    private fun getLine(anchor: String): Int {
+      if (isLine(anchor)) {
+        val substring = anchor.substring(1, anchor.length)
+        return Integer.parseInt(substring) - 1
+      }
+      throw IllegalStateException()
+    }
+
+    private fun isLine(anchor: String): Boolean {
+      if (anchor.isEmpty()) {
         return false
       }
-      val headers = runReadAction {
-        val file = PsiManager.getInstance(project).findFile(targetFile)
-        val scope = when (file) {
-          null -> GlobalSearchScope.EMPTY_SCOPE
-          else -> GlobalSearchScope.fileScope(file)
-        }
-        return@runReadAction HeaderAnchorIndex.collectHeaders(project, scope, anchor)
+
+      val firstChar = anchor[0]
+      if (firstChar == 'l' || firstChar == 'L') {
+        val substring = anchor.substring(1, anchor.length)
+        return StringUtils.isNumeric(substring)
       }
-      invokeLater {
-        when {
-          headers.isEmpty() -> showCannotNavigateNotification(project, anchor, point)
-          headers.size == 1 -> navigateToHeader(project, targetFile, headers.first())
-          else -> showHeadersPopup(project, headers, point)
-        }
-      }
-      return true
+      return false
     }
 
     private fun obtainHeadersPopupPosition(project: Project?): RelativePoint? {
