@@ -58,6 +58,8 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <projectViewPane implementation="org.intellij.plugins.markdown.view.EasyItProjectView"/>
+
     <typedHandler implementation="org.intellij.plugins.markdown.editor.tables.handlers.MarkdownTableTypedHandler"/>
     <backspaceHandlerDelegate implementation="org.intellij.plugins.markdown.editor.tables.handlers.MarkdownTableBackspaceHandler"/>
     <enterHandlerDelegate implementation="org.intellij.plugins.markdown.editor.tables.handlers.MarkdownTableEnterHandler"/>
@@ -229,6 +231,7 @@
     <lang.foldingBuilder language="Markdown" implementationClass="org.intellij.plugins.markdown.folding.MarkdownFoldingBuilder"/>
 
     <stubIndex implementation="org.intellij.plugins.markdown.lang.index.HeaderTextIndex"/>
+    <stubIndex implementation="org.intellij.plugins.markdown.lang.index.InlineLinkTextIndex"/>
     <stubElementTypeHolder class="org.intellij.plugins.markdown.lang.MarkdownStubElementTypes"/>
     <stubIndex implementation="org.intellij.plugins.markdown.lang.index.HeaderAnchorIndex"/>
 

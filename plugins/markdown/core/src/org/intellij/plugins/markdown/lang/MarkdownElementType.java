@@ -20,6 +20,7 @@ import org.intellij.markdown.MarkdownElementTypes;
 import org.intellij.markdown.MarkdownTokenTypes;
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes;
 import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownHeaderStubElementType;
+import org.intellij.plugins.markdown.lang.stubs.impl.MarkdownInlineLinkStubElementType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -66,13 +67,18 @@ public class MarkdownElementType extends IElementType {
     }
     else if (isHeaderElementType(markdownType)) {
       result = new MarkdownHeaderStubElementType(markdownType.toString());
-    }
-    else {
+    }else if (isLinkElementType(markdownType)) {
+      result = new MarkdownInlineLinkStubElementType(markdownType.toString());
+    }else {
       result = new MarkdownElementType(markdownType.toString());
     }
     markdownToPlatformTypeMap.put(markdownType, result);
     platformToMarkdownTypeMap.put(result, markdownType);
     return result;
+  }
+
+  private static boolean isLinkElementType(org.intellij.markdown.IElementType type) {
+    return type == MarkdownElementTypes.INLINE_LINK;
   }
 
   private static boolean isHeaderElementType(@NotNull org.intellij.markdown.IElementType markdownType) {

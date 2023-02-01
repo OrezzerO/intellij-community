@@ -14,4 +14,8 @@ public interface MarkdownStubElementTypes {
   IElementType ATX_4 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_4);
   IElementType ATX_5 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_5);
   IElementType ATX_6 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_6);
+
+  IElementType INLINE_LINK = platformType(org.intellij.markdown.MarkdownElementTypes.INLINE_LINK);
+
+  //IElementType ATX_6 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_6);
 }
