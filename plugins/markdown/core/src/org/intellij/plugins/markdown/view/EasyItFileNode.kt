@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.util.Alarm
@@ -24,7 +25,8 @@ import javax.swing.SwingUtilities
 
 class EasyItFileNode : AbstractTreeNode<VirtualFile?> {
 
-  constructor(project: Project?, value: VirtualFile) : super(project, value) {}
+
+  constructor(project: Project?, value: VirtualFile) : super(project, value)
   constructor(project: Project?, value: VirtualFile, root: Boolean) : super(project, value) {
     if (root) {
       subscribeToVFS(project!!)
@@ -45,22 +47,28 @@ class EasyItFileNode : AbstractTreeNode<VirtualFile?> {
     for (link in list) {
       val text = link.linkText
       val destination = link.linkDestination
-      if (isDestMdFile(destination)) {
-        children.add(EasyItFileNode(myProject, findVirtualFile(destination)!!))
+      var file = findVirtualFile(destination)
+      if (isDestMdFile(file)) {
+        children.add(EasyItFileNode(myProject, file!!))
       }
-      val node = Node(text, destination)
-      children.add(EasyItLinkNode(myProject, node))
+      else {
+        val node = Node(text, destination,file)
+        children.add(EasyItLinkNode(myProject, node))
+      }
     }
 
     return children
   }
 
   private fun findVirtualFile(destination: MarkdownLinkDestination?): VirtualFile? {
-    return value
+    return destination?.text?.let { value?.parent?.findFileByRelativePath(it.substringBefore("#")) }
   }
 
-  private fun isDestMdFile(destination: MarkdownLinkDestination?): Boolean {
-    return false
+  private fun isDestMdFile(file: VirtualFile?): Boolean {
+    if (file == null) {
+      return false;
+    }
+    return file.extension == "md" || file.extension == "markdown"
   }
 
   override fun update(presentation: PresentationData) {
@@ -72,14 +80,16 @@ class EasyItFileNode : AbstractTreeNode<VirtualFile?> {
   }
 
   override fun canNavigate(): Boolean {
-    return false
+    return true
   }
 
   override fun canNavigateToSource(): Boolean {
     return canNavigate()
   }
 
-  override fun navigate(requestFocus: Boolean) {}
+  override fun navigate(requestFocus: Boolean) {
+    PsiManager.getInstance(myProject).findFile(value!!)?.navigate(requestFocus)
+  }
 
 
   private fun subscribeToVFS(project: Project?) {
@@ -123,7 +133,7 @@ class EasyItFileNode : AbstractTreeNode<VirtualFile?> {
       }
     })
 
-    InlineLinkTextIndex.addLinkFileListener(object : LinkIndexListener{
+    InlineLinkTextIndex.addLinkFileListener(object : LinkIndexListener {
       init {
         val me: LinkIndexListener = this
         Disposer.register(project
