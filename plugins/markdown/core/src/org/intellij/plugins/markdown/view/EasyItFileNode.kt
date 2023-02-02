@@ -16,6 +16,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.util.Alarm
 import com.intellij.util.CommonProcessors.CollectProcessor
+import org.intellij.plugins.markdown.easyit.EasyItNodeManager
 import org.intellij.plugins.markdown.lang.index.InlineLinkTextIndex
 import org.intellij.plugins.markdown.lang.index.LinkIndexListener
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownInlineLink
@@ -23,8 +24,14 @@ import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestination
 import java.util.*
 import javax.swing.SwingUtilities
 
-class EasyItFileNode : AbstractTreeNode<VirtualFile?> {
+class EasyItFileNode : EasyItNode<VirtualFile?> {
 
+  companion object {
+    // todo support multi project
+    val MANAGER = EasyItNodeManager();
+  }
+
+  var oldChildren: Collection<AbstractTreeNode<*>?> = emptyList()
 
   constructor(project: Project?, value: VirtualFile) : super(project, value)
   constructor(project: Project?, value: VirtualFile, root: Boolean) : super(project, value) {
@@ -52,11 +59,18 @@ class EasyItFileNode : AbstractTreeNode<VirtualFile?> {
         children.add(EasyItFileNode(myProject, file!!))
       }
       else {
-        val node = Node(text, destination,file)
-        children.add(EasyItLinkNode(myProject, node))
+        val node = Node(text, destination, file)
+        var linkNode = EasyItLinkNode(myProject, node)
+        children.add(linkNode)
+        MANAGER.onNodeAdded(linkNode)
+        MANAGER.onNodeAdded(linkNode)
       }
     }
-
+    for (ele in oldChildren) {
+      val easyItNode = ele as? EasyItLinkNode
+      easyItNode?.let { MANAGER.onNodeRemoved(it) }
+    }
+    oldChildren = children
     return children
   }
 
