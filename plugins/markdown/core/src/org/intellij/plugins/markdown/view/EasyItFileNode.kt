@@ -26,11 +26,6 @@ import javax.swing.SwingUtilities
 
 class EasyItFileNode : EasyItNode<VirtualFile?> {
 
-  companion object {
-    // todo support multi project
-    val MANAGER = EasyItNodeManager();
-  }
-
   var oldChildren: Collection<AbstractTreeNode<*>?> = emptyList()
 
   constructor(project: Project?, value: VirtualFile) : super(project, value)
@@ -62,13 +57,12 @@ class EasyItFileNode : EasyItNode<VirtualFile?> {
         val node = Node(text, destination, file)
         var linkNode = EasyItLinkNode(myProject, node)
         children.add(linkNode)
-        MANAGER.onNodeAdded(linkNode)
-        MANAGER.onNodeAdded(linkNode)
+        EasyItNodeManager.getInstance(myProject)?.onNodeAdded(linkNode)
       }
     }
     for (ele in oldChildren) {
       val easyItNode = ele as? EasyItLinkNode
-      easyItNode?.let { MANAGER.onNodeRemoved(it) }
+      easyItNode?.let { EasyItNodeManager.getInstance(myProject)?.onNodeRemoved(it) }
     }
     oldChildren = children
     return children
