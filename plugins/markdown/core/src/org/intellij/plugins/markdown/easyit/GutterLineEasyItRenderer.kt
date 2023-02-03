@@ -47,7 +47,7 @@ data class GutterLineEasyItRenderer(val node: EasyItLinkNode) : GutterIconRender
   }
 
   private fun createHighlighter() {
-    val lineNum = node.anchorAttributes["L"]?.let { Integer.valueOf(it) - 1 } ?: 0
+    val lineNum = node.value?.anchorAttributes?.get("L")?.let { Integer.valueOf(it) - 1 } ?: 0
     reference = markup?.addPersistentLineHighlighter(CodeInsightColors.BOOKMARKS_ATTRIBUTES, lineNum, layer)?.let {
       it.gutterIconRenderer = this
       it.errorStripeTooltip = tooltipText

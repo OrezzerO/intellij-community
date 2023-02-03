@@ -49,13 +49,13 @@ class EasyItFileNode : EasyItNode<VirtualFile?> {
     for (link in list) {
       val text = link.linkText
       val destination = link.linkDestination
-      var file = findVirtualFile(destination)
+      val file = findVirtualFile(destination)
       if (isDestMdFile(file)) {
         children.add(EasyItFileNode(myProject, file!!))
       }
-      else {
+      else if (text != null && destination != null && file != null) {
         val node = Node(text, destination, file)
-        var linkNode = EasyItLinkNode(myProject, node)
+        val linkNode = EasyItLinkNode(myProject, node)
         children.add(linkNode)
         EasyItNodeManager.getInstance(myProject)?.onNodeAdded(linkNode)
       }

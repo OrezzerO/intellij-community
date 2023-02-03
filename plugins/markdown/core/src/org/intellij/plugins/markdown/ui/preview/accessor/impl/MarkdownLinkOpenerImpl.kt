@@ -173,7 +173,7 @@ internal class MarkdownLinkOpenerImpl: MarkdownLinkOpener {
       if (!targetFile.hasMarkdownType()) {
         if (isLine(anchor)) {
           val line = getLine(anchor)
-          val descriptor = OpenFileDescriptor(project, targetFile, line, 0);
+          val descriptor = OpenFileDescriptor(project, targetFile, line, 0)
           invokeLater {
             descriptor.navigate(true)
           }
