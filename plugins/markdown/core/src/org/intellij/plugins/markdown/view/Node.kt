@@ -2,11 +2,14 @@
 package org.intellij.plugins.markdown.view
 
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestination
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkText
 
 class Node(val text: MarkdownLinkText, val destination: MarkdownLinkDestination, val file: VirtualFile) {
+
+  var project: Project = text.project
 
   val descriptor: OpenFileDescriptor
 
@@ -36,6 +39,26 @@ class Node(val text: MarkdownLinkText, val destination: MarkdownLinkDestination,
     }
   }
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as Node
+
+    if (file != other.file) return false
+    if (project != other.project) return false
+    if (line != other.line) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = file.hashCode()
+    result = 31 * result + project.hashCode()
+    result = 31 * result + line
+    return result
+  }
+
   companion object {
     fun parseSingleAnchor(s: String, anchorAttributes: MutableMap<String, String>) {
       var lastLetter = 0
@@ -53,6 +76,8 @@ class Node(val text: MarkdownLinkText, val destination: MarkdownLinkDestination,
     }
 
   }
+
+
 
 }
 
