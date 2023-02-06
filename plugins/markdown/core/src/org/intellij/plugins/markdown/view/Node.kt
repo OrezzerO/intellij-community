@@ -4,6 +4,8 @@ package org.intellij.plugins.markdown.view
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.tree.TokenSet
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestination
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkText
 
@@ -16,6 +18,14 @@ class Node(val text: MarkdownLinkText, val destination: MarkdownLinkDestination,
   val anchorAttributes = mutableMapOf<String, String>()
 
   var line: Int = 0
+
+  val name =text.node.getChildren(TokenSet.create(MarkdownTokenTypes.TEXT)).let {
+    if(it.isNotEmpty()){
+      it[0].text
+    }else{
+      "EMPTY"
+    }
+  }
 
   init {
     destination.text?.substringAfter("#")?.let { parseAnchor(it) }

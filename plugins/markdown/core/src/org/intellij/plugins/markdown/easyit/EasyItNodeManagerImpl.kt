@@ -37,10 +37,10 @@ class EasyItNodeManagerImpl(val project: Project) : EasyItNodeManager {
 
   inner class Info constructor(node: Node) {
     private val myRenderer: GutterLineEasyItRenderer
-    private val nodes = mutableSetOf<EasyItLinkNode>()
+    val nodes = mutableSetOf<EasyItLinkNode>()
 
     init {
-      myRenderer = GutterLineEasyItRenderer(node)
+      myRenderer = GutterLineEasyItRenderer(this, node)
     }
 
     fun refreshRender() {

@@ -2,7 +2,7 @@
 package org.intellij.plugins.markdown.easyit
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.bookmark.BookmarkType
+import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.ex.MarkupModelEx
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
@@ -15,7 +15,7 @@ import org.intellij.plugins.markdown.view.Node
 import java.lang.ref.WeakReference
 import javax.swing.Icon
 
-data class GutterLineEasyItRenderer(var node: Node) : GutterIconRenderer() {
+data class GutterLineEasyItRenderer(val info : EasyItNodeManagerImpl.Info, var node: Node) : GutterIconRenderer() {
 
 
   private var reference: WeakReference<RangeHighlighter>? = null
@@ -56,6 +56,11 @@ data class GutterLineEasyItRenderer(var node: Node) : GutterIconRenderer() {
       it.errorStripeTooltip = tooltipText
       WeakReference(it)
     }
+  }
+
+
+  override fun getPopupMenuActions(): ActionGroup? {
+    return GutterDynamicActionGroup(info);
   }
 
 

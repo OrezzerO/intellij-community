@@ -16,15 +16,7 @@ class EasyItLinkNode(project: Project?, value: Node) : EasyItNode<Node?>(project
 
   override fun update(presentation: PresentationData) {
     presentation.setIcon(AllIcons.Nodes.Method)
-
-    val empty = "EMPTY"
-    val children = value?.text?.node?.getChildren(TokenSet.create(MarkdownTokenTypes.TEXT)).orEmpty()
-    if (children.isEmpty()) {
-      presentation.presentableText = empty
-    }
-    else {
-      presentation.presentableText = children[0].text
-    }
+    presentation.presentableText = value!!.name
   }
 
   override fun canNavigate(): Boolean {
@@ -40,4 +32,16 @@ class EasyItLinkNode(project: Project?, value: Node) : EasyItNode<Node?>(project
       it.descriptor.navigate(true)
     }
   }
+
+  // TODO attention: 这里重载了父类的 equals 和 hashcode, 父类的方法使用 value 作为比较的对象,
+  //  这里修改之后,有可能造成其他问题
+  override fun equals(other: Any?): Boolean {
+    return this === other
+  }
+
+  override fun hashCode(): Int {
+    return System.identityHashCode(this)
+  }
+
+
 }
